@@ -11,6 +11,21 @@ Thermistor::Thermistor(uint8_t _input_pin, uint32_t _nominal_resistance, uint32_
   this->_beta_coefficient = _beta_coefficient;
 }
 
+void Thermistor::safety_temperature(uint16_t _safety_temperature_limit, uint16_t _lookback_length) {
+  this->_safety_temperature_limit = _safety_temperature_limit;
+  this->_lookback_length = _lookback_length;
+
+  _safety_temperature_array = new uint16_t[_lookback_length - 1];
+}
+
+void Thermistor::set_max_lookback_variance(uint16_t _max_variance) {
+  this->_max_variance = _max_variance;
+}
+
+void Thermistor::set_lookback_read_time(int _lookback_read_time) {
+  this->_lookback_read_time = _lookback_read_time;
+}
+
 // Read and return the raw value from ADC
 float Thermistor::read_thermistor() {
   float _thermistor_raw = analogRead(_input_pin);
@@ -83,4 +98,39 @@ float Thermistor::thermistor_degree_value(float _thermistor_raw_input, char _uni
 float Thermistor::average_degree_value(char _units) {  // _units can be C, F, or K
   float _average_raw = average_thermistor_values();
   return (thermistor_degree_value(_average_raw, _units));
+}
+
+// Run all temperature safety checks
+bool Thermistor::check_safety_temperature(uint16_t _current_temperature) { // TODO: Better implimentation of _current temperature to be not unit specific
+  unsigned long _current_milliseconds = millis();
+  if (_current_milliseconds - _previous_milliseconds >= _lookback_read_time) {
+    _update_safety_array(read_thermistor());
+    _previous_milliseconds = _current_milliseconds;
+  }
+
+  // Increment or reset the current reading number depending on current value
+  if (!(_lookback_current_reading >= _lookback_length)) {
+    _lookback_current_reading++;
+  } else {
+    _lookback_current_reading = 0;
+
+    // Cycle through and average the lookback values
+    float _running_difference = 0;
+    for (uint16_t lcv = 0; lcv < _lookback_length; lcv++) {
+      _running_difference += _safety_temperature_array[lcv];
+    }
+    _running_difference /= _lookback_length;  // Average the variance for faulty thermistor check
+
+    // If either the safety temperature is reached, or the thermistor reads faulty, return false
+    if (_current_temperature >= _safety_temperature_limit || _running_difference <= _max_variance) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+// Store new raw thermistor reading in the safety check array
+void Thermistor::_update_safety_array(uint16_t _new_raw_temperature) {
+  _safety_temperature_array[_lookback_current_reading] = _new_raw_temperature;
 }
