@@ -12,8 +12,10 @@ void setup() {
 
   }
 
-  OLED.print_temperature(2, 24.3, 'C');
-  OLED.print_setpoint(2, 26.0, 'C');
+  OLED.clear();
+  OLED.print_temperature(24.31, 27.25, 'C');
+  OLED.print_pid_values(2, 6, 1);
+  OLED.display();
 }
 
 void loop() {

@@ -18,28 +18,45 @@ bool OLED::begin_display(byte address) {
   }
 }
 
-void OLED::print_temperature(uint8_t _size, float _temperature, char _units) {
-  Display.clearDisplay();
-  Display.setTextSize(_size);
+void OLED::print_temperature(float _temperature, float _setpoint, char _units) {
+  Display.setTextSize(2);
   Display.setTextColor(WHITE);
+
+  //Current temperature printing
   Display.setCursor(0, 0);
   Display.print(F(_temperature));
   Display.print((char) 247);
   Display.print(F(_units));
-  Display.display();
-}
 
-void OLED::print_setpoint(uint8_t _size, float _setpoint, char _units) {
-  Display.setTextSize(_size);
-  Display.setTextColor(WHITE);
+  //Setpoint printing
   Display.setCursor(0, 16);
   Display.print(F(_setpoint));
   Display.print((char) 247);
   Display.print(F(_units));
+}
+
+void OLED::print_pid_values(uint16_t _kp, uint16_t _ki, uint16_t _kd) {
+  const uint8_t _x_offset = 90;
+  Display.setTextSize(1);
+  Display.setTextColor(WHITE);
+
+  Display.setCursor(_x_offset, 0);
+  Display.print(F("Kp:"));
+  Display.print(F(_kp));
+  Display.setCursor(_x_offset, 11);
+  Display.print(F("Ki:"));
+  Display.print(F(_ki));
+  Display.setCursor(_x_offset, 22);
+  Display.print(F("Kd:"));
+  Display.print(F(_kd));
+}
+
+void OLED::display() {
   Display.display();
 }
 
-void OLED::print_numbers(float _print_value) {
+void OLED::clear() {
+  Display.clearDisplay();
 }
 
 void OLED::_splash_screen() {
