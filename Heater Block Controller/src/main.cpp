@@ -45,3 +45,8 @@ void loop() {
     }
   }
 }
+Thermistor Thermistor(A0, 100000, 100000, 25, 3950);
+  Thermistor.smooth_read_thermistor_number(7);
+  Thermistor.update_thermistor_array();
+  Thermistor.check_safety_temperature();
+#include <Thermistor.h>
