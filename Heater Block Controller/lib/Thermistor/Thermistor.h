@@ -21,6 +21,9 @@ class Thermistor {
   float thermistor_degree_value(float _thermistor_raw_input, char _units);
   float average_degree_value(char _units);
 
+  void set_new_setpoint(float _new_setpoint);
+  float get_setpoint();
+
  private:
   void _update_safety_array(uint16_t _new_raw_temperature);
 
@@ -42,6 +45,8 @@ class Thermistor {
   uint32_t _series_resistance;        // Reference resistor value
   float _nominal_temperature = 25.0;  // MUST BE IN DEGREES CELSIUS, Usually around room temp (25° C)
   uint16_t _beta_coefficient = 3950;  // Thermistor beta coefficient
+
+  float _current_setpoint = 0;
 };
 
 #endif

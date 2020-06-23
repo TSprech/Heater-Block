@@ -12,8 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.*/
 class Button_Handler {
  public:
   Button_Handler(uint8_t _pin_0, uint8_t _pin_1, uint8_t _pin_2);  // Setup for pins used for buttons and LEDs
-  void button_setup();                                                                                             // Sets pinMode for each pin
-  int8_t button_read();                                                                                           // Read each button pin and return if any are pressed
+  void button_setup();                                             // Sets pinMode for each pin
+  int8_t button_read();                                            // Read each button pin and return if any are pressed
+  float adjust_value(float _current_value, float _increment);
 
  private:
   // Pins used for IO

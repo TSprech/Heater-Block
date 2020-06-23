@@ -101,7 +101,7 @@ float Thermistor::average_degree_value(char _units) {  // _units can be C, F, or
 }
 
 // Run all temperature safety checks
-bool Thermistor::check_safety_temperature(uint16_t _current_temperature) { // TODO: Better implimentation of _current temperature to be not unit specific
+bool Thermistor::check_safety_temperature(uint16_t _current_temperature) {  // TODO: Better implimentation of _current temperature to be not unit specific
   unsigned long _current_milliseconds = millis();
   if (_current_milliseconds - _previous_milliseconds >= _lookback_read_time) {
     _update_safety_array(read_thermistor());
@@ -133,4 +133,12 @@ bool Thermistor::check_safety_temperature(uint16_t _current_temperature) { // TO
 // Store new raw thermistor reading in the safety check array
 void Thermistor::_update_safety_array(uint16_t _new_raw_temperature) {
   _safety_temperature_array[_lookback_current_reading] = _new_raw_temperature;
+}
+
+void Thermistor::set_new_setpoint(float _new_setpoint) {
+  _current_setpoint = _new_setpoint;
+}
+
+float Thermistor::get_setpoint() {
+  return _current_setpoint;
 }
